@@ -26,31 +26,33 @@
 #include "UnitConversion.h"
 #include "Math.h"
 
+
+
 double motorPowerKW(double volts,
                     double amps,
                     double powerFactor)
 {
     double kw = 0.0;
-
+    
     if (volts > 0.0 && amps > 0.0 && powerFactor > 0.0)
     {
-        kw = (volts * amps * powerFactor * 1.732) / 1000.0;
+        kw = (volts * amps * powerFactor * sqrt(3.0)) / 1000.0;
     }
 
     return kw;
 }
 
 double oilFloodedScrewOperatingTempF(double inletTempF,
-                                     double dischargePressurePSI,
+                                     double dischargePressurePSIG,
                                      double ambientPSIA)
 {
     double opTempF = 0.0;
 
-    double psiaLine = dischargePressurePSI + ambientPSIA;
+    double psiaLine = dischargePressurePSIG + ambientPSIA;
     
     double ambientTemp = celsiusFromFahrenheit(inletTempF);
     
-    if (dischargePressurePSI < 0)
+    if (dischargePressurePSIG < 0)
     {
         opTempF = 6.1115 * exp((22.452 * ambientTemp) / (272.55 + ambientTemp));
     }
@@ -203,11 +205,11 @@ double eventStorageCF(double eventDurationMins,
     double volumeCF = 0.0;
     
     double deltaP = initialPressurePSIG - minPressureForEventPSIG;
-    double deltaF = cfmRequiredForEvent - meteredCFMSupplied;
+    double deltaV = cfmRequiredForEvent - meteredCFMSupplied;
     
-    if (eventDurationMins > 0.0 && deltaF > 0.0 && deltaP > 0.0 && ambientPSIA > 0.0)
+    if (eventDurationMins > 0.0 && deltaV > 0.0 && deltaP > 0.0 && ambientPSIA > 0.0)
     {
-        double numerator = eventDurationMins * deltaF * ambientPSIA;
+        double numerator = eventDurationMins * deltaV * ambientPSIA;
         volumeCF = numerator / deltaP;
     }
     
@@ -286,20 +288,42 @@ double acfmFromSCFM(double scfm,
 // Determine pipe size in inches to obtain a specific velocity for site conditions.
 double pipeDiamInForVelocity(double flowRateCFM,
                              double velocityFPS,
-                             double linePressurePSI,
-                             double ambientAtmosphericPressurePSI)
+                             double linePressurePSIG,
+                             double ambientPreesurePSIA)
 {
     double pipeDiameterIn = 0.0;
     
-    if (flowRateCFM > 0.0 && velocityFPS > 0.0 && linePressurePSI > 0.0)
+    if (flowRateCFM > 0.0 && velocityFPS > 0.0 && linePressurePSIG > 0.0)
     {
-        double numerator = (144.0 * flowRateCFM * ambientAtmosphericPressurePSI);
-        double denominator = (velocityFPS * 60.0 * (linePressurePSI + ambientAtmosphericPressurePSI));
+        double numerator = (144.0 * flowRateCFM * ambientPreesurePSIA);
+        double denominator = (velocityFPS * 60.0 * (linePressurePSIG + ambientPreesurePSIA));
         double areaInSq = numerator / denominator;
         pipeDiameterIn = sqrt(areaInSq / M_PI) * 2.0;
     }
 
     return pipeDiameterIn;
+}
+
+// Velocity for diameter
+double velocityInPipeFPS(double flowRateCFM,
+                         double linePressurePSIG,
+                         double ambientPreesurePSIA,
+                         double pipeDiameterIn)
+{
+    double fps = 0.0;
+
+    if (flowRateCFM > 0.0 && linePressurePSIG > 0.0 && ambientPreesurePSIA > 0.0 && pipeDiameterIn > 0.0)
+    {
+        double compressionRatio = (ambientPreesurePSIA / (linePressurePSIG + ambientPreesurePSIA));
+        double numerator = flowRateCFM * compressionRatio;
+        
+        double pipeArea = (pipeDiameterIn / 24.0) * (pipeDiameterIn / 24.0);
+        double denominator = 60.0 * M_PI * pipeArea;
+        
+        fps = numerator / denominator;
+    }
+    
+    return fps;
 }
 
 // Mapped values
@@ -325,3 +349,40 @@ double gearSpeedFeetPerMinute(double gearDiameterInches,
     speed = (M_PI / 12.0) * gearDiameterInches * rpm;
     return speed;
 }
+
+// Oil Carryover Volume
+double oilCarryoverGallons(double flowRateCFM,
+                           double concentrationPPM,
+                           double operatingHours,
+                           double oilSpecificGravity)
+{
+    double gallons = 0.0;
+
+    if (flowRateCFM > 0.0 && concentrationPPM > 0.0 && operatingHours > 0.0 && oilSpecificGravity > 0.0)
+    {
+        double numerator = concentrationPPM * flowRateCFM * operatingHours * 60.0 * 0.0000012;
+        double denominator = (oilSpecificGravity * 128.0);
+        gallons = numerator / denominator;
+    }
+
+    return gallons;
+}
+
+// Oil Carryover Concentration
+double oilCarryoverConcentrationPPM(double flowRateCFM,
+                                    double oilLossGallons,
+                                    double operatingHours,
+                                    double oilSpecificGravity)
+{
+    double ppm = 0.0;
+
+    if (flowRateCFM > 0.0 && oilLossGallons > 0.0 && operatingHours > 0.0 && oilSpecificGravity > 0.0)
+    {
+        double numerator = oilLossGallons * (oilSpecificGravity * 128.0) ;
+        double denominator = (operatingHours * 60.0 * flowRateCFM * 0.0000012);
+        ppm = numerator / denominator;
+    }
+    
+    return ppm;
+}
+

@@ -29,7 +29,7 @@ double motorPowerKW(double volts,
 
 // Temperatures
 double oilFloodedScrewOperatingTempF(double inletTempF,
-                                     double dischargePressurePSI,
+                                     double dischargePressurePSIG,
                                      double ambientPSIA);
 
 // Pressure-Altitude relationship
@@ -97,8 +97,14 @@ double acfmFromSCFM(double scfm,
 // Diameter in inches for flow and velocity
 double pipeDiamInForVelocity(double flowRateCFM,
                              double velocityFPS,
-                             double linePressurePSI,
-                             double ambientAtmosphericPressurePSI);
+                             double linePressurePSIG,
+                             double ambientPreesurePSIA);
+
+// Velocity of air for pipe diameter
+double velocityInPipeFPS(double flowRateCFM,
+                         double linePressurePSIG,
+                         double ambientPreesurePSIA,
+                         double pipeDiameterIn);
 
 
 // Mapping Function, useful for sensors
@@ -111,3 +117,15 @@ double mappedValue(double inputValue,
 // Gear speed along pitch line in ft/min
 double gearSpeedFeetPerMinute(double gearDiameterInches,
                               double rpm);
+
+// Oil Carryover Volume
+double oilCarryoverGallons(double flowRateCFM,
+                           double concentrationPPM,
+                           double operatingHours,
+                           double oilSpecificGravity);
+
+// Oil Carryover Concentration
+double oilCarryoverConcentrationPPM(double flowRateCFM,
+                                    double oilLossGallons,
+                                    double operatingHours,
+                                    double oilSpecificGravity);
