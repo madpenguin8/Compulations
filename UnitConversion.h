@@ -3,7 +3,7 @@
 //
 //
 /*
- Copyright (c) 2014 Mike Diehl - ifixcompressors@gmail.com
+ Copyright (c) 2016 Mike Diehl - ifixcompressors@gmail.com
  
  This file is part of Compulations.
  

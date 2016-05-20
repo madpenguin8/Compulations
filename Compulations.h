@@ -1,10 +1,10 @@
 //
 //  Compulations.h
 //
-//  Copyright © 2015 Mike Diehl. All rights reserved.
+//
 //
 /*
- Copyright (c) 2014 Mike Diehl - ifixcompressors@gmail.com
+ Copyright (c) 2016 Mike Diehl - ifixcompressors@gmail.com
  
  This file is part of Compulations.
  
@@ -106,6 +106,10 @@ double velocityInPipeFPS(double flowRateCFM,
                          double ambientPreesurePSIA,
                          double pipeDiameterIn);
 
+// Density of air lbs/ft^3
+double airDensityPoundsPerCubicFoot(double linePressurePSIG,
+                                    double ambientPreesurePSIA,
+                                    double airTemperatureF);
 
 // Mapping Function, useful for sensors
 double mappedValue(double inputValue,

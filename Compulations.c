@@ -1,10 +1,10 @@
 //
 //  Compulations.c
 //
-//  Copyright © 2015 Mike Diehl. All rights reserved.
+// 
 //
 /*
- Copyright (c) 2014 Mike Diehl - ifixcompressors@gmail.com
+ Copyright (c) 2016 Mike Diehl - ifixcompressors@gmail.com
  
  This file is part of Compulations.
  
@@ -25,8 +25,6 @@
 #include "Compulations.h"
 #include "UnitConversion.h"
 #include "Math.h"
-
-
 
 double motorPowerKW(double volts,
                     double amps,
@@ -324,6 +322,22 @@ double velocityInPipeFPS(double flowRateCFM,
     }
     
     return fps;
+}
+
+// Density of air lbs/ft^3
+double airDensityPoundsPerCubicFoot(double linePressurePSIG,
+                                    double ambientPreesurePSIA,
+                                    double airTemperatureF)
+{
+    double lbsCF = 0.0;
+    double absoluteP = linePressurePSIG + ambientPreesurePSIA;
+
+    if (absoluteP > 0.0)
+    {
+        lbsCF = (2.7 * absoluteP) / rankineFromFahrenheit(airTemperatureF);
+    }
+    
+    return lbsCF;
 }
 
 // Mapped values
