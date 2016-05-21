@@ -39,7 +39,7 @@ static inline double kelvinFromFahrenheit(double f){return ((f - 32.0) * (5.0f /
 static inline double rankineFromFahrenheit(double f){return f + 459.67;};
 
 // Pressure
-static inline double barFromPSI(double psi){return psi / 14.5037738;};
+static inline double barFromPSI(double psi){return psi / 14.503773773020923;};
 static inline double inH20FromkPa(double kPa){return kPa * 4.01474213311;};
 static inline double inHgFromMmHg(double mmHg){return mmHg / 25.399999705;};
 static inline double inHgFromkPa(double kPa){return kPa * 0.295299802;};
@@ -52,7 +52,7 @@ static inline double kPaFromPSI(double PSI){return PSI / 0.14503773773020923;};
 static inline double mmH2OFromkPa(double kPa){return kPa * 101.971621298;};
 static inline double mmHgFromInHg(double inHg){return inHg * 25.399999705;};
 static inline double mmHgFromkPa(double kPa){return kPa * 7.5006183;};
-static inline double psiFromBar(double bar){return bar * 14.5037738;};
+static inline double psiFromBar(double bar){return bar * 14.503773773020923;};
 static inline double psiFromInHg(double inHg){return inHg / 2.036025;};
 static inline double psiFromkPa(double kPa){return kPa * 0.14503773773020923;};
 

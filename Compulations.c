@@ -182,10 +182,8 @@ double systemCapacityCF(double unloadedTimeSec,
 
     if (totalTime > 0.0 && deltaP > 0.0 && ratedFlowCFM > 0.0 && ambientPreesurePSIA > 0.0)
     {
-        double volumeCF = 0.0;
-
-        double numerator = loadedTimeSec * unloadedTimeSec * ratedFlowCFM * ambientPreesurePSIA;
-        double denominator = totalTime * deltaP;
+        double numerator = (loadedTimeSec / 60.0) * (unloadedTimeSec / 60.0) * ratedFlowCFM * ambientPreesurePSIA;
+        double denominator = (totalTime / 60.0) * deltaP;
 
         volumeCF = numerator / denominator;
     }
