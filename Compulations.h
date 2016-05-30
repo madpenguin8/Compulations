@@ -58,20 +58,20 @@ double refillRateCFM(double storageCF,
                      double ambientPreesurePSIA);
 
 // System Capacity Estimator
-double systemCapacityCF(double unloadedTimeSec,
-                        double loadedTimeSec,
-                        double unloadPressurePSIG,
-                        double loadPressurePSIG,
-                        double ratedFlowCFM,
-                        double ambientPreesurePSIA);
+double systemCapacityCubicFeetByCycleTime(double unloadedTimeSec,
+                                          double loadedTimeSec,
+                                          double unloadPressurePSIG,
+                                          double loadPressurePSIG,
+                                          double ratedFlowCFM,
+                                          double ambientPreesurePSIA);
 
 // Secondary storage
-double eventStorageCF(double eventDurationMins,
-                      double cfmRequiredForEvent,
-                      double meteredCFMSupplied,
-                      double ambientPSIA,
-                      double initialPressurePSIG,
-                      double minPressureForEventPSIG);
+double eventStorageCubicFeet(double eventDurationMins,
+                             double cfmRequiredForEvent,
+                             double meteredCFMSupplied,
+                             double ambientPSIA,
+                             double initialPressurePSIG,
+                             double minPressureForEventPSIG);
 
 // ACFM SCFM conversions
 double vaporPressureOfWaterInPsiForTemp(double degreesFahrenheit);
@@ -95,10 +95,10 @@ double acfmFromSCFM(double scfm,
                     double inletPressurePSI);
 
 // Diameter in inches for flow and velocity
-double pipeDiamInForVelocity(double flowRateCFM,
-                             double velocityFPS,
-                             double linePressurePSIG,
-                             double ambientPreesurePSIA);
+double pipeDiameterInchesForVelocity(double flowRateCFM,
+                                     double velocityFPS,
+                                     double linePressurePSIG,
+                                     double ambientPreesurePSIA);
 
 // Velocity of air for pipe diameter
 double velocityInPipeFPS(double flowRateCFM,

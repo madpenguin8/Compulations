@@ -96,7 +96,6 @@ double altitudeFeetFromPSIA(double psia)
     altitude =  (1 - pow((mBar/pstd), 0.190284)) * 145366.45;
     
     return altitude;
-
 }
 
 double pumpupTimeInSeconds(double tankSizeGallons,
@@ -126,14 +125,17 @@ double leakRateCFM(double tankSizeGallons,
                    double decayTimeMins)
 {
     double cfm = 0.0;
-    
+
     if (tankSizeGallons > 0.0 && decayTimeMins > 0.0 && startPSIG > 0.0 && ambientPSIA > 0.0)
     {
         double tankSizeCF = cubicFeetFromGallons(tankSizeGallons);
         double deltaP = (startPSIG - endPSIG);
+
+        // No need for curving the flow rate for normal pressure changes
         double flowCorrection = 1.0;
 
-        // Compressed Air Challenge says we need flow correction for wide pressure bands, specifically if low is 50% or less than high.
+        // Compressed Air Challenge says we need flow correction for wide pressure bands,
+        // specifically if low pressure is 50% or less than the high pressure.
         if(endPSIG <= (startPSIG / 2.0))
         {
             flowCorrection = 1.25;
@@ -144,6 +146,7 @@ double leakRateCFM(double tankSizeGallons,
 
         cfm = numerator / denominator;
     }
+
     return cfm;
 }
 
@@ -167,12 +170,12 @@ double refillRateCFM(double storageCF,
     return cfm;
 }
 
-double systemCapacityCF(double unloadedTimeSec,
-                        double loadedTimeSec,
-                        double unloadPressurePSIG,
-                        double loadPressurePSIG,
-                        double ratedFlowCFM,
-                        double ambientPreesurePSIA)
+double systemCapacityCubicFeetByCycleTime(double unloadedTimeSec,
+                                          double loadedTimeSec,
+                                          double unloadPressurePSIG,
+                                          double loadPressurePSIG,
+                                          double ratedFlowCFM,
+                                          double ambientPreesurePSIA)
 {
     double volumeCF = 0.0;
 
@@ -187,16 +190,17 @@ double systemCapacityCF(double unloadedTimeSec,
 
         volumeCF = numerator / denominator;
     }
+
     return volumeCF;
 }
 
 // Secondary storage
-double eventStorageCF(double eventDurationMins,
-                      double cfmRequiredForEvent,
-                      double meteredCFMSupplied,
-                      double ambientPSIA,
-                      double initialPressurePSIG,
-                      double minPressureForEventPSIG)
+double eventStorageCubicFeet(double eventDurationMins,
+                             double cfmRequiredForEvent,
+                             double meteredCFMSupplied,
+                             double ambientPSIA,
+                             double initialPressurePSIG,
+                             double minPressureForEventPSIG)
 {
     double volumeCF = 0.0;
     
@@ -259,6 +263,7 @@ double scfmFromACFM(double acfm,
     double tempMultiplier = rankineFromFahrenheit(siteAmbientTempF) / rankineFromFahrenheit(standardAmbientTempF);
     double inletPressureMultiplier = siteAmbientPressurePSI / inletPressurePSI;
     scfm = (acfm / rhMultiplier) / tempMultiplier / inletPressureMultiplier;
+
     return scfm;
 }
 
@@ -278,14 +283,15 @@ double acfmFromSCFM(double scfm,
     double tempMultiplier = rankineFromFahrenheit(siteAmbientTempF) / rankineFromFahrenheit(standardAmbientTempF);
     double inletPressureMultiplier = siteAmbientPressurePSI / inletPressurePSI;
     acfm = scfm * rhMultiplier * tempMultiplier * inletPressureMultiplier;
+
     return acfm;
 }
 
 // Determine pipe size in inches to obtain a specific velocity for site conditions.
-double pipeDiamInForVelocity(double flowRateCFM,
-                             double velocityFPS,
-                             double linePressurePSIG,
-                             double ambientPreesurePSIA)
+double pipeDiameterInchesForVelocity(double flowRateCFM,
+                                     double velocityFPS,
+                                     double linePressurePSIG,
+                                     double ambientPreesurePSIA)
 {
     double pipeDiameterIn = 0.0;
     
@@ -357,8 +363,8 @@ double mappedValue(double inputValue,
 double gearSpeedFeetPerMinute(double gearDiameterInches,
                               double rpm)
 {
-    double speed = 0.0;
-    speed = (M_PI / 12.0) * gearDiameterInches * rpm;
+    double speed = (M_PI / 12.0) * gearDiameterInches * rpm;
+
     return speed;
 }
 
