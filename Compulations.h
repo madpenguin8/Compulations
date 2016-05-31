@@ -27,7 +27,13 @@ double motorPowerKW(double volts,
                     double amps,
                     double powerFactor);
 
-// Temperatures
+// Shaft Power
+double shaftPowerHP(double volts,
+                    double amps,
+                    double efficiency,
+                    double powerFactor);
+
+// Optimal operating temperature for oil flooded screw
 double oilFloodedScrewOperatingTempF(double inletTempF,
                                      double dischargePressurePSIG,
                                      double ambientPSIA);

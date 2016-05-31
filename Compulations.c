@@ -26,9 +26,9 @@
 #include "UnitConversion.h"
 #include "Math.h"
 
-double motorPowerKW(double volts,
-                    double amps,
-                    double powerFactor)
+double threePhaseMotorInputPowerKW(double volts,
+                                   double amps,
+                                   double powerFactor)
 {
     double kw = 0.0;
     
@@ -40,11 +40,29 @@ double motorPowerKW(double volts,
     return kw;
 }
 
+// Shaft Power
+double threePhaseShaftPowerHP(double volts,
+                              double amps,
+                              double efficiency,
+                              double powerFactor)
+{
+    double hp = 0.0;
+
+    if (volts > 0.0 && amps > 0.0 && efficiency > 0.0 && powerFactor > 0.0)
+    {
+        double shaftKw = (volts * amps * efficiency * powerFactor * sqrt(3.0)) / 1000.0;
+        hp = hpFromKw(shaftKw);
+    }
+
+    return hp;
+}
+
+// Optimal operating temperature for oil flooded screw
 double oilFloodedScrewOperatingTempF(double inletTempF,
                                      double dischargePressurePSIG,
                                      double ambientPSIA)
 {
-    double opTempF = 0.0;
+    double opTempC = 0.0;
 
     double psiaLine = dischargePressurePSIG + ambientPSIA;
     
@@ -52,52 +70,50 @@ double oilFloodedScrewOperatingTempF(double inletTempF,
     
     if (dischargePressurePSIG < 0)
     {
-        opTempF = 6.1115 * exp((22.452 * ambientTemp) / (272.55 + ambientTemp));
+        opTempC = 6.1115 * exp((22.452 * ambientTemp) / (272.55 + ambientTemp));
     }
     else
     {
-        opTempF = 6.1121 * exp((17.502 * ambientTemp) / (240.9 + ambientTemp));
+        opTempC = 6.1121 * exp((17.502 * ambientTemp) / (240.9 + ambientTemp));
     }
     
-    opTempF = opTempF * (psiaLine / ambientPSIA);
+    opTempC = opTempC * (psiaLine / ambientPSIA);
     
-    double pdpHi = log(opTempF / 6.1121) * 240.9 / (17.502 - log(opTempF / 6.1121));
-    double pdpLo = log(opTempF / 6.1115) * 272.55 / (22.452 - log(opTempF / 6.115));
+    double pdpHi = log(opTempC / 6.1121) * 240.9 / (17.502 - log(opTempC / 6.1121));
+    double pdpLo = log(opTempC / 6.1115) * 272.55 / (22.452 - log(opTempC / 6.115));
     
     if (pdpHi < 0)
     {
-        opTempF = pdpLo;
+        opTempC = pdpLo;
     }
     else
     {
-        opTempF = pdpHi;
+        opTempC = pdpHi;
     }
 
-    return fahrenheitFromCelsius(opTempF);
+    return fahrenheitFromCelsius(opTempC);
 }
 
+// Pressure-Altitude relationship
 double ambientPSIAForAltitudeInFeet(double altitude)
-{
-    double ambientPSIA = 0.0;
-    
-    ambientPSIA = (101325.0 * pow((1 - 0.0000225577 * metersFromFeet(altitude)), 5.25588)) / 6894.75729;
+{    
+    double ambientPSIA = (101325.0 * pow((1 - 0.0000225577 * metersFromFeet(altitude)), 5.25588)) / 6894.75729;
     
     return ambientPSIA;
 }
 
 double altitudeFeetFromPSIA(double psia)
 {
-    double altitude = 0.0;
-    
     double mBar = kPaFromPSI(psia) * 10.0;
     
     double pstd = 1013.25;
     
-    altitude =  (1 - pow((mBar/pstd), 0.190284)) * 145366.45;
+    double altitude = (1 - pow((mBar/pstd), 0.190284)) * 145366.45;
     
     return altitude;
 }
 
+// Pumpup Time
 double pumpupTimeInSeconds(double tankSizeGallons,
                            double flowRateCFM,
                            double startPressurePSIG,
@@ -118,6 +134,7 @@ double pumpupTimeInSeconds(double tankSizeGallons,
     return time;
 }
 
+// Leak Rate
 double leakRateCFM(double tankSizeGallons,
                    double startPSIG,
                    double endPSIG,
@@ -150,6 +167,7 @@ double leakRateCFM(double tankSizeGallons,
     return cfm;
 }
 
+// Refill Rate
 double refillRateCFM(double storageCF,
                      double startPressurePSIG,
                      double endPressurePSIG,
@@ -170,6 +188,7 @@ double refillRateCFM(double storageCF,
     return cfm;
 }
 
+// System Capacity Estimator
 double systemCapacityCubicFeetByCycleTime(double unloadedTimeSec,
                                           double loadedTimeSec,
                                           double unloadPressurePSIG,
@@ -344,7 +363,7 @@ double airDensityPoundsPerCubicFoot(double linePressurePSIG,
     return lbsCF;
 }
 
-// Mapped values
+// Mapping Function, useful for sensors
 double mappedValue(double inputValue,
                    double inputMin,
                    double inputMax,
@@ -403,4 +422,3 @@ double oilCarryoverConcentrationPPM(double flowRateCFM,
     
     return ppm;
 }
-
