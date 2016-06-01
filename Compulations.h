@@ -22,16 +22,25 @@
  along with Compulations.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Power factor from nameplate
+double threePhaseMotorPowerFactor(double nameplateHP,
+                                  double nameplateVolts,
+                                  double nameplateAmps);
+
+double singlePhaseMotorPowerFactor(double nameplateHP,
+                                   double nameplateVolts,
+                                   double nameplateAmps);
+
 // Power
-double motorPowerKW(double volts,
-                    double amps,
-                    double powerFactor);
+double threePhaseMotorInputPowerKW(double volts,
+                                   double amps,
+                                   double powerFactor);
 
 // Shaft Power
-double shaftPowerHP(double volts,
-                    double amps,
-                    double efficiency,
-                    double powerFactor);
+double threePhaseShaftPowerHP(double volts,
+                              double amps,
+                              double efficiency,
+                              double powerFactor);
 
 // Optimal operating temperature for oil flooded screw
 double oilFloodedScrewOperatingTempF(double inletTempF,

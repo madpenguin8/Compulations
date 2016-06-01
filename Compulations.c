@@ -26,6 +26,42 @@
 #include "UnitConversion.h"
 #include "Math.h"
 
+// Power factor from nameplate data
+double threePhaseMotorPowerFactor(double nameplateHP,
+                                  double nameplateVolts,
+                                  double nameplateAmps)
+{
+    double pf = 0.0;
+
+    if (nameplateHP > 0.0 && nameplateVolts > 0.0 && nameplateAmps > 0.0)
+    {
+        double numerator = kwFromHP(nameplateHP) * 1000.0;
+        double denominator = (sqrt(3.0) * nameplateVolts * nameplateAmps);
+
+        pf = numerator / denominator;
+    }
+
+    return pf;
+}
+
+double singlePhaseMotorPowerFactor(double nameplateHP,
+                                   double nameplateVolts,
+                                   double nameplateAmps)
+{
+    double pf = 0.0;
+    
+    if (nameplateHP > 0.0 && nameplateVolts > 0.0 && nameplateAmps > 0.0)
+    {
+        double numerator = kwFromHP(nameplateHP) * 1000.0;
+        double denominator = (nameplateVolts * nameplateAmps);
+        
+        pf = numerator / denominator;
+    }
+    
+    return pf;
+}
+
+
 double threePhaseMotorInputPowerKW(double volts,
                                    double amps,
                                    double powerFactor)
